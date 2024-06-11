@@ -1,4 +1,3 @@
-<!-- Vista de publicaciones -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,24 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Publicaciones - Uforum</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        /* Estilos CSS aquí */
-    </style>
 </head>
 <body>
     <header>
         <!-- Encabezado aquí -->
     </header>
 
-    <div class="container">
+    <div class="container mt-5">
         <!-- Botón de cerrar sesión -->
         <form action="{{ route('logout') }}" method="POST">
             @csrf
-            <button type="submit" class="btn btn-danger">Cerrar sesión</button>
+            <button type="submit" class="btn btn-danger mb-4">Cerrar sesión</button>
         </form>
 
-        <!-- Resto de tu contenido de la vista de publicaciones aquí -->
-        <!-- ... -->
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
         <!-- Formulario para crear nuevas publicaciones -->
         <div class="card mb-4">
@@ -60,3 +59,4 @@
     </div>
 </body>
 </html>
+

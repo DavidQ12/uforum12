@@ -11,7 +11,7 @@
         <!-- Logo de la aplicación -->
         <div class="row justify-content-center mb-4">
             <div class="col-md-8 text-center">
-                <img src="{{ asset('public_images/Uforum_logo.png') }}" alt="Logo de Uforum" style="width: 100px; height: auto;">
+                <img src="{{ url('/public_images/Uforum_logo.png') }}" alt="Logo de Uforum" style="width: 100px; height: auto;">
             </div>
         </div>
         

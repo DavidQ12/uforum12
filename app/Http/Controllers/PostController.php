@@ -6,38 +6,44 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    private $publicaciones = [
-        [
-            'titulo' => 'Publicación de David Ernesto Quintanilla Segovia',
-            'contenido' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
-            'nombre' => 'David Ernesto Quintanilla Segovia',
-            'carnet' => 'SMSS152722',
-            'carrera' => 'Ingeniería en Sistemas y Redes',
-        ],
-        [
-            'titulo' => 'Publicación de Luis Francisco Pleitez Quintanilla',
-            'contenido' => 'Proin ac mauris non sem faucibus ultrices...',
-            'nombre' => 'Luis Francisco Pleitez Quintanilla',
-            'carnet' => 'SMSS073122',
-            'carrera' => 'Ingeniería en Sistemas',
-        ],
-        [
-            'titulo' => 'Publicación de Patrick Jeremi Orellana Menjívar',
-            'contenido' => 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere...',
-            'nombre' => 'Patrick Jeremi Orellana Menjívar',
-            'carnet' => 'SMSS108822',
-            'carrera' => 'Ingeniería en Sistemas',
-        ],
-    ];
+    private $publicaciones = [];
+
+    public function __construct()
+    {
+        $this->publicaciones = session()->get('publicaciones', [
+            [
+                'titulo' => 'Publicación de David Ernesto Quintanilla Segovia',
+                'contenido' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
+                'nombre' => 'David Ernesto Quintanilla Segovia',
+                'carnet' => 'SMSS152722',
+                'carrera' => 'Ingeniería en Sistemas y Redes',
+            ],
+            [
+                'titulo' => 'Publicación de Luis Francisco Pleitez Quintanilla',
+                'contenido' => 'Proin ac mauris non sem faucibus ultrices...',
+                'nombre' => 'Luis Francisco Pleitez Quintanilla',
+                'carnet' => 'SMSS073122',
+                'carrera' => 'Ingeniería en Sistemas',
+            ],
+            [
+                'titulo' => 'Publicación de Patrick Jeremi Orellana Menjívar',
+                'contenido' => 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere...',
+                'nombre' => 'Patrick Jeremi Orellana Menjívar',
+                'carnet' => 'SMSS108822',
+                'carrera' => 'Ingeniería en Sistemas',
+            ],
+        ]);
+    }
 
     public function index()
     {
-        return view('publicaciones', ['publicaciones' => $this->publicaciones]);
+        return view('publicaciones', ['publicaciones' => session()->get('publicaciones', $this->publicaciones)]);
     }
 
     public function detalle($id)
     {
-        if (!isset($this->publicaciones[$id])) {
+        $publicaciones = session()->get('publicaciones', $this->publicaciones);
+        if (!isset($publicaciones[$id])) {
             abort(404);
         }
 
@@ -55,7 +61,7 @@ class PostController extends Controller
         ]);
 
         return view('publicacion_detalle', [
-            'publicacion' => $this->publicaciones[$id],
+            'publicacion' => $publicaciones[$id],
             'comentarios' => $comentarios,
             'reacciones' => $reacciones,
             'id' => $id
@@ -87,15 +93,23 @@ class PostController extends Controller
 
         $titulo = $request->input('titulo');
         $contenido = $request->input('contenido');
+        $nombre = session()->get('usuario', 'Anónimo');
+        $carnet = 'SMSS000000';  // Puedes cambiarlo según tu lógica
+        $carrera = 'Ingeniería en Sistemas';  // Puedes cambiarlo según tu lógica
 
         $nuevaPublicacion = [
             'titulo' => $titulo,
             'contenido' => $contenido,
+            'nombre' => $nombre,
+            'carnet' => $carnet,
+            'carrera' => $carrera,
         ];
 
-        array_unshift($this->publicaciones, $nuevaPublicacion);
+        $publicaciones = session()->get('publicaciones', $this->publicaciones);
+        array_unshift($publicaciones, $nuevaPublicacion); // Añade la nueva publicación al principio del array
+        session()->put('publicaciones', $publicaciones);
 
-        return redirect()->route('publicaciones');
+        return redirect()->route('publicaciones')->with('success', 'Publicación creada con éxito.');
     }
 
     public function reaccionar(Request $request, $id)
